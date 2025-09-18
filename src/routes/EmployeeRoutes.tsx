@@ -8,7 +8,7 @@ export function EmployeeRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AppLayout />}>
-        <Route path="/refund" element={<Refund />} />
+        <Route path="/" element={<Refund />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
