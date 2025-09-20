@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router";
 
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
@@ -13,8 +14,12 @@ export function Refund() {
   const [filename, setFilename] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
+
+    navigate("/confirm", { state: { fromSubmit: true } });
 
     console.log(name, category, amount, filename);
   }
