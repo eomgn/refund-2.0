@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router";
 
+import fileSvg from "../assets/file.svg";
+
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/Categories";
@@ -77,11 +79,22 @@ export function Refund() {
           />
         </div>
 
-        <Upload
-          legend="Comprovante"
-          filename={filename ? filename.name : null}
-          onChange={(e) => e.target.files && setFilename(e.target.files[0])}
-        />
+        {params.id ? (
+          <a
+            href="https://google.com.br"
+            target="_blank"
+            className="flex items-center justify-center gap-2 font-semibold text-sm text-green-100 my-6 hover:opacity-60 transition ease-linear"
+          >
+            <img src={fileSvg} alt="Ícone de File para abrir comprovante" />
+            Abrir Comprovante
+          </a>
+        ) : (
+          <Upload
+            legend="Comprovante"
+            filename={filename ? filename.name : null}
+            onChange={(e) => e.target.files && setFilename(e.target.files[0])}
+          />
+        )}
 
         <Button type="submit" isLoading={isLoading}>
           {params.id ? "Voltar" : "Enviar"}
