@@ -6,9 +6,30 @@ import { AuthRoutes } from "./AuthRoutes";
 import { EmployeeRoutes } from "./EmployeeRoutes";
 import { ManagerRoutes } from "./ManagerRoutes";
 
-const isLoading = true;
+const isLoading = false;
+
+// const session = undefined;
+
+const session = {
+  user: {
+    role: "employee",
+  },
+};
 
 export function IndexRoutes() {
+  function Route() {
+    switch (session?.user.role) {
+      case "employee":
+        return <EmployeeRoutes />;
+
+      case "manager":
+        return <ManagerRoutes />;
+
+      default:
+        return <AuthRoutes />;
+    }
+  }
+
   if (isLoading) {
     return <Loading />;
   }
@@ -16,9 +37,7 @@ export function IndexRoutes() {
   return (
     <>
       <BrowserRouter>
-        <AuthRoutes />
-        {/* <EmployeeRoutes /> */}
-        {/* <ManagerRoutes /> */}
+        <Route />
       </BrowserRouter>
     </>
   );
