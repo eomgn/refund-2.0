@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
@@ -8,16 +8,22 @@ import { Upload } from "../components/Upload";
 import { Button } from "../components/Button";
 
 export function Refund() {
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
-  const [amount, setAmount] = useState("");
+  const [name, setName] = useState("Teste");
+  const [category, setCategory] = useState("transport");
+  const [amount, setAmount] = useState("34");
   const [filename, setFilename] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const params = useParams<{ id: string }>();
+  console.log(params);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
+
+    if (params.id) {
+      return navigate(-1);
+    }
 
     navigate("/confirm", { state: { fromSubmit: true } });
 
@@ -44,6 +50,7 @@ export function Refund() {
           legend="Nome da solicitação"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={params.id ? true : false}
         />
 
         <div className="flex gap-4">
@@ -52,6 +59,7 @@ export function Refund() {
             legend="Categoria"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            disabled={params.id ? true : false}
           >
             {CATEGORIES_KEYS.map((category) => (
               <option key={category} value={category}>
@@ -65,6 +73,7 @@ export function Refund() {
             required
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            disabled={params.id ? true : false}
           />
         </div>
 
@@ -75,7 +84,7 @@ export function Refund() {
         />
 
         <Button type="submit" isLoading={isLoading}>
-          Enviar
+          {params.id ? "Voltar" : "Enviar"}
         </Button>
       </form>
     </>

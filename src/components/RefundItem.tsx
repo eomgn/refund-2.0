@@ -1,4 +1,4 @@
-type RefundItemProps = {
+export type RefundItemProps = {
   id: string;
   name: string;
   category: string;
