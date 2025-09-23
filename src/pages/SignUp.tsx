@@ -45,7 +45,15 @@ export function SignUp() {
         confirmPassword,
       });
 
+      // ############## COM AXIOS ##############
       await api.post("/users", data);
+
+      // ############## COM FETCH ##############
+      // await fetch("http://localhost:3333/users", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(data),
+      // });
 
       if (confirm("Cadastro realizado com sucesso. Ir para tela inicial?")) {
         navigate("/");
