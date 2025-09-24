@@ -3,6 +3,7 @@ import { z, ZodError } from "zod";
 import { AxiosError } from "axios";
 
 import { api } from "../services/api";
+import { useAuth } from "../hooks/useAuth";
 
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
@@ -21,7 +22,9 @@ export function SignIn() {
     password: "",
   });
 
-  async function signIn(prevState: any, formData: FormData) {
+  const auth = useAuth(); // hook context
+
+  async function signIn(_: any, formData: FormData) {
     const email = formData.get("email");
     const password = formData.get("password");
 
@@ -33,7 +36,7 @@ export function SignIn() {
 
       const response = await api.post("/sessions", data);
 
-      console.log(response.data);
+      auth.save(response.data);
     } catch (error) {
       if (error instanceof ZodError) {
         return { message: error.issues[0].message };
