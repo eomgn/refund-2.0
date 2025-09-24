@@ -1,9 +1,13 @@
+import { AuthProvider } from "./contexts/AuthContext";
+
 import { IndexRoutes } from "./routes";
 
 export function App() {
   return (
     <>
-      <IndexRoutes />
+      <AuthProvider>
+        <IndexRoutes />
+      </AuthProvider>
     </>
   );
 }

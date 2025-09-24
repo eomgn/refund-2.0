@@ -1,4 +1,5 @@
 import { BrowserRouter } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 import { Loading } from "../components/Loading";
 
@@ -17,6 +18,9 @@ const session = {
 };
 
 export function IndexRoutes() {
+  const context = useAuth();
+  console.log(context);
+
   function Route() {
     switch (session?.user.role) {
       case "employee":
