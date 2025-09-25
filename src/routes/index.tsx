@@ -7,10 +7,8 @@ import { AuthRoutes } from "./AuthRoutes";
 import { EmployeeRoutes } from "./EmployeeRoutes";
 import { ManagerRoutes } from "./ManagerRoutes";
 
-const isLoading = false;
-
 export function IndexRoutes() {
-  const { session } = useAuth();
+  const { session, isLoading } = useAuth();
 
   function Route() {
     switch (session?.user.role) {
