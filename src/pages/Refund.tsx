@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import fileSvg from "../assets/file.svg";
@@ -7,6 +7,7 @@ import { api } from "../services/api";
 
 import { z, ZodError } from "zod";
 import { AxiosError } from "axios";
+import { formatCurrency } from "../utils/formatCurrency";
 
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
@@ -27,6 +28,7 @@ export function Refund() {
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [filename, setFilename] = useState<File | null>(null);
+  const [fileURL, setFileURL] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -80,6 +82,33 @@ export function Refund() {
     }
   }
 
+  async function fetchRefund(id: string) {
+    try {
+      const response = await api.get<RefundsAPIResponse>(`/refunds/${id}`);
+
+      // console.log(response.data);
+
+      setName(response.data.name);
+      setCategory(response.data.category);
+      setAmount(formatCurrency(response.data.amount));
+      setFileURL(response.data.filename);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AxiosError) {
+        return alert(error.response?.data.message);
+      }
+
+      alert("Não foi possível carregar.");
+    }
+  }
+
+  useEffect(() => {
+    if (params.id) {
+      fetchRefund(params.id);
+    }
+  });
+
   return (
     <>
       <form
@@ -127,9 +156,9 @@ export function Refund() {
           />
         </div>
 
-        {params.id ? (
+        {params.id && fileURL ? (
           <a
-            href="https://google.com.br"
+            href={`http://localhost:3333/uploads/${fileURL}`}
             target="_blank"
             className="flex items-center justify-center gap-2 font-semibold text-sm text-green-100 my-6 hover:opacity-60 transition ease-linear"
           >
