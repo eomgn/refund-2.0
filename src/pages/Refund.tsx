@@ -42,6 +42,15 @@ export function Refund() {
     try {
       setIsLoading(true);
 
+      if (!filename) {
+        return alert("Anexe um arquivo de comprovanete válido.");
+      }
+
+      const fileUploadForm = new FormData();
+      fileUploadForm.append("file", filename);
+
+      const response = await api.post("/uploads", fileUploadForm);
+
       const data = refundSchema.parse({
         name,
         category,
@@ -50,7 +59,7 @@ export function Refund() {
 
       await api.post("/refunds", {
         ...data,
-        filename: "12345678976434567898765432",
+        filename: response.data.filename,
       });
 
       navigate("/confirm", { state: { fromSubmit: true } });
