@@ -66,7 +66,7 @@ export function SignUp() {
       }
 
       if (error instanceof AxiosError) {
-        return alert(error.response?.data.message);
+        return alert(error.response?.data.issues.password._errors[0]);
       }
 
       return alert("Não foi possível cadastrar.");
