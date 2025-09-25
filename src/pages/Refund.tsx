@@ -3,22 +3,30 @@ import { useNavigate, useParams } from "react-router";
 
 import fileSvg from "../assets/file.svg";
 
+import { z, ZodError } from "zod";
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/Categories";
 import { Upload } from "../components/Upload";
 import { Button } from "../components/Button";
 
+const refundSchema = z.object({
+  name: z.string().min(3, { error: "Informe um nome válido." }),
+  category: z.string().min(1, { error: "Selecione uma categoria." }),
+  amount: z.coerce
+    .number({ error: "Informe um valor que seja válído." })
+    .positive({ error: "Informe um valor que seja válído maior que 0." }),
+});
+
 export function Refund() {
-  const [name, setName] = useState("Teste");
-  const [category, setCategory] = useState("transport");
-  const [amount, setAmount] = useState("34");
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
   const [filename, setFilename] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  console.log(params);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -27,9 +35,29 @@ export function Refund() {
       return navigate(-1);
     }
 
-    navigate("/confirm", { state: { fromSubmit: true } });
+    try {
+      setIsLoading(true);
 
-    console.log(name, category, amount, filename);
+      const data = refundSchema.parse({
+        name,
+        category,
+        amount: amount.replace(",", "."),
+      });
+
+      // navigate("/confirm", { state: { fromSubmit: true } });
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof ZodError) {
+        return alert(error.issues[0].message);
+      }
+
+      return alert("Não foi possível realizar solicitação.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
