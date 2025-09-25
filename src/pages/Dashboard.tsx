@@ -71,7 +71,7 @@ export function Dashboard() {
 
   useEffect(() => {
     fectchRefunds();
-  }, []);
+  }, [page]);
 
   return (
     <>
