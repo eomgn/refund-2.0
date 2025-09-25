@@ -1,4 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect } from "react";
+
+import { AxiosError } from "axios";
+import { api } from "../services/api";
 
 import searchSvg from "../assets/search.svg";
 
@@ -10,24 +13,46 @@ import { Pagination } from "../components/Pagination";
 import { CATEGORIES } from "../utils/Categories";
 import { formatCurrency } from "../utils/formatCurrency";
 
-const REFUND_EXAMPLE = {
-  id: "123",
-  name: "Matheus",
-  category: CATEGORIES.transport.name,
-  amount: formatCurrency(34.5),
-  categoryItem: CATEGORIES.transport.icon,
-};
+const PER_PAGE = 5;
 
 export function Dashboard() {
   const [name, setName] = useState("");
   const [page, setPage] = useState(1);
-  const [totalOfPage, setTotalOfPage] = useState(10);
-  const [refunds, setRefunds] = useState<RefundItemProps[]>([REFUND_EXAMPLE]);
+  const [totalOfPage, setTotalOfPage] = useState(0);
+  const [refunds, setRefunds] = useState<RefundItemProps[]>([]);
 
-  function fectchRefunds(e: FormEvent) {
+  async function fectchRefunds() {
+    try {
+      const response = await api.get<RefundsPaginationAPIResponse>(
+        `${"/refunds"}?name=${name}&page=${page}&perPage=${PER_PAGE}`
+      );
+
+      setRefunds(
+        response.data.refunds.map((refund) => ({
+          id: refund.id,
+          name: refund.user.name,
+          description: refund.name,
+          amount: formatCurrency(refund.amount),
+          categoryItem: CATEGORIES[refund.category].icon,
+        }))
+      );
+
+      // console.log(response.data);
+      setTotalOfPage(response.data.totalPages);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AxiosError) {
+        return alert(error.response?.data.message);
+      }
+
+      alert("Não foi possível carregar.");
+    }
+  }
+
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    console.log(name);
+    fectchRefunds();
   }
 
   function handlePagination(action: "next" | "previous") {
@@ -44,13 +69,17 @@ export function Dashboard() {
     });
   }
 
+  useEffect(() => {
+    fectchRefunds();
+  }, []);
+
   return (
     <>
       <div className="bg-gray-500 p-10 rounded-lg text-gray-100 md:min-w-[768px]">
         <h1 className="text-gray-100 font-bold text-xl flex-1">Solicitações</h1>
 
         <form
-          onSubmit={fectchRefunds}
+          onSubmit={onSubmit}
           className="flex flex-1 item-center justify-center pb-12 mt-6 gap-3 border-b-[1px] border-b-gray-400 "
         >
           <Input
